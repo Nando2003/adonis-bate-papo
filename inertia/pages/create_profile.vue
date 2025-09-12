@@ -33,7 +33,9 @@
             required
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           />
-          <p id="handle-helper" class="mt-1 text-sm text-gray-500">The handler must contain lowercase letters, numbers, and underscores (_).</p>
+          <p id="handle-helper" class="mt-1 text-sm text-gray-500">
+            The handler must contain lowercase letters, numbers, and underscores (_).
+          </p>
           <p v-if="profileForm.errors.handle" class="mt-1 text-sm text-red-600">
             {{ profileForm.errors.handle }}
           </p>
@@ -67,15 +69,18 @@ const profileForm = useForm({
 
 const handleRegex = /^[a-z0-9_]+$/
 
-watch(() => profileForm.handle, (newValue) => {
-  if (newValue === '') {
-    profileForm.clearErrors('handle')
-  } else if (!handleRegex.test(newValue)) {
-    profileForm.setError('handle', 'This handle contains a forbidden word.')
-  } else if (profileForm.errors.handle) {
-    profileForm.clearErrors('handle')
+watch(
+  () => profileForm.handle,
+  (newValue) => {
+    if (newValue === '') {
+      profileForm.clearErrors('handle')
+    } else if (!handleRegex.test(newValue)) {
+      profileForm.setError('handle', 'This handle contains a forbidden word.')
+    } else if (profileForm.errors.handle) {
+      profileForm.clearErrors('handle')
+    }
   }
-})
+)
 
 const profileStoreRequest = () => {
   profileForm.post('/profiles')

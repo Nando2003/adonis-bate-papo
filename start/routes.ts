@@ -37,3 +37,7 @@ router
   .post('/profiles', '#controllers/profiles_controller.store')
   .as('profiles.store')
   .use([middleware.auth()])
+router
+  .get('/profiles/:handle', '#controllers/profiles_controller.show')
+  .as('profiles.show')
+  .use([middleware.auth(), middleware.profileRequired()])

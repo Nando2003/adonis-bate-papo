@@ -36,4 +36,26 @@ export default class ProfilesController {
 
     return response.redirect('/')
   }
+
+  async show(ctx: HttpContext) {
+    const { params } = ctx
+    const handle = params.handle as string | undefined
+
+    if (!handle) {
+      return ctx.response.badRequest('Handle is required')
+    }
+
+    const profile = await Profile.query().where('handle', handle).first()
+
+    if (!profile) {
+      return ctx.response.notFound('Profile not found')
+    }
+
+    const profileData = {
+      displayName: profile.displayName,
+      handle: profile.handle,
+    }
+
+    return ctx.response.ok(profileData)
+  }
 }
