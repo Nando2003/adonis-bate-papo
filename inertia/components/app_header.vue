@@ -10,7 +10,8 @@
         </div>
 
         <div class="flex items-center">
-          <div v-if="user" class="flex items-center space-x-4">
+          <div v-if="user" class="flex items-center space-x-8">
+            <span v-if="user.profile" class="text-gray-500 text-base font-semibold">Hi, <span class="text-pink-300">{{ user.profile.displayName }}</span>!</span>
             <Link
               href="/logout"
               method="post"
@@ -31,6 +32,12 @@
 import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 
+interface User {
+  profile: {
+    displayName: string
+  }
+}
+
 const page = usePage()
-const user = computed(() => page.props.user)
+const user = computed(() => page.props.user as User)
 </script>

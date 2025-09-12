@@ -2,7 +2,11 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
 // Home route
-router.on('/').renderInertia('home').as('home').use([middleware.auth()])
+router
+  .on('/')
+  .renderInertia('home')
+  .as('home')
+  .use([middleware.auth(), middleware.profileRequired()])
 
 // Login routes
 router.get('/login', '#controllers/auth_controller.showLogin').as('login').use([middleware.guest()])
@@ -23,3 +27,13 @@ router
 
 // Logout route
 router.post('/logout', '#controllers/auth_controller.logout').as('logout').use([middleware.auth()])
+
+// Profile routes
+router
+  .get('/profiles/create', '#controllers/profiles_controller.showCreate')
+  .as('profiles.create')
+  .use([middleware.auth()])
+router
+  .post('/profiles', '#controllers/profiles_controller.store')
+  .as('profiles.store')
+  .use([middleware.auth()])

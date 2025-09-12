@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="min-h-screen flex flex-col items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
       <div class="text-center mb-6">
         <h2 class="text-2xl font-bold uppercase">
@@ -16,7 +16,7 @@
         {{ props.error }}
       </div>
 
-      <form @submit.prevent="loginRequest" class="space-y-6">
+      <form @submit.prevent="loginRequest" class="space-y-6" autocomplete="off">
         <div class="space-y-2">
           <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
           <input
