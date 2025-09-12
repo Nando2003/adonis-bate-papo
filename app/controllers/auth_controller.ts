@@ -16,32 +16,23 @@ export default class AuthController {
     const { email, password } = await request.validateUsing(loginValidator)
 
     const user = await User.query().where('email', email).first()
-    if (!user) {
-      session.flash('error', 'Usuário não encontrado')
-      return response.redirect().back()
+
+    if (user) {
+      const isPasswordValid = await user.verifyPassword(password)
+
+      if (isPasswordValid) {
+        await auth.use('web').login(user)
+        return response.redirect('/')
+      }
     }
 
-    const isPasswordValid = await user.verifyPassword(password)
-    if (!isPasswordValid) {
-      session.flash('error', 'Credenciais inválidas')
-      return response.redirect().back()
-    }
-
-    await auth.use('web').login(user)
-    return response.redirect('/')
+    session.flash('error', 'Invalid email or password')
+    return response.redirect('/login')
   }
 
-  async register({ request, response, session }: HttpContext) {
+  async register({ request, response }: HttpContext) {
     const { email, password } = await request.validateUsing(registerValidator)
-
-    const existingUser = await User.query().where('email', email).first()
-    if (existingUser) {
-      session.flash('error', 'Usuário já existe')
-      return response.redirect().back()
-    }
-
     await User.create({ email, password })
-    session.flash('success', 'Usuário registrado com sucesso!')
     return response.redirect('/login')
   }
 
