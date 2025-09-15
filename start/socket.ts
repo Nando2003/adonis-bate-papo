@@ -16,8 +16,8 @@ app.ready(async () => {
   })
 
   io.on('connection', (socket) => {
-    const userId = socket.data.userId
-    socket.emit('welcome', `Welcome user ${userId}!`)
+    const userId = socket.data.userId as number
+    console.log(`[ws] user connected: ${userId}`)
   })
 
   io.engine.on('connection_error', (err) => {

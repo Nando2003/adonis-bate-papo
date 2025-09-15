@@ -38,7 +38,7 @@ export default class AuthSocketMiddleware {
         return next(new Error('Authentication error: User not authenticated'))
       }
 
-      socket.data.userId = sessionMessage.auth_web
+      socket.data.userId = Number(sessionMessage.auth_web)
       return next()
     } catch (error) {
       return next(new Error('Authentication error'))

@@ -7,16 +7,22 @@
         </h2>
       </div>
 
-      <form class="space-y-6">
+      <div
+        v-if="props.error"
+        class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100 border border-red-300 text-center"
+      >
+        {{ props.error }}
+      </div>
+
+      <form @submit.prevent="searchRequest" class="space-y-2">
         <div class="flex rounded-md shadow-sm">
           <input
             type="text"
             v-model="searchForm.handle"
-            placeholder="Enter the handle of your friend"
+            placeholder="Enter the handle of your friend without @"
             required
             class="block w-full px-4 py-3 border border-gray-300 rounded-none rounded-l-md focus:outline-none focus:border-pink-300"
           />
-
           <button
             type="submit"
             :disabled="searchForm.processing"
@@ -25,35 +31,46 @@
             Search
           </button>
         </div>
+        <p v-if="searchForm.errors.handle" class="mt-1 text-sm text-red-600">
+          {{ searchForm.errors.handle }}
+        </p>
       </form>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useForm } from '@inertiajs/vue3'
-import { onMounted, onUnmounted } from 'vue'
-import { io, Socket } from 'socket.io-client'
+import { useForm, router } from '@inertiajs/vue3'
 import DefaultLayout from '../layouts/default_layout.vue'
+import { watch } from 'vue'
 
-defineOptions({
-  layout: DefaultLayout,
-})
+defineOptions({ layout: DefaultLayout })
+const searchForm = useForm({ handle: '' })
 
-const searchForm = useForm({
-  handle: '',
-})
+const props = defineProps<{ error?: string }>()
+const handleRegex = /^[a-z0-9_]+$/
 
-let socket: Socket | null = null
+watch(
+  () => searchForm.handle,
+  (newValue) => {
+    if (newValue === '') {
+      searchForm.clearErrors('handle')
+    } else if (!handleRegex.test(newValue)) {
+      searchForm.setError('handle', 'The handler must contain lowercase letters, numbers, and underscores (_)')
+    } else if (searchForm.errors.handle) {
+      searchForm.clearErrors('handle')
+    }
+  }
+)
 
-onMounted(() => {
-  socket = io('/')
+const searchRequest = () => {
+  const handle = (searchForm.handle || '').trim()
+  const url = `/profiles/${encodeURIComponent(handle)}`
 
-  socket.on('welcome', (message: string) => {
-    console.log(message)
+  router.get(url, {}, {
+    preserveState: true,
+    preserveScroll: true,
   })
-})
-onUnmounted(() => {
-  if (socket) socket.disconnect()
-})
+}
+
 </script>

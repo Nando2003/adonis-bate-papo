@@ -42,13 +42,15 @@ export default class ProfilesController {
     const handle = params.handle as string | undefined
 
     if (!handle) {
-      return ctx.response.badRequest('Handle is required')
+      ctx.session.flash('error', 'Handle is required')
+      return ctx.response.redirect('/')
     }
 
     const profile = await Profile.query().where('handle', handle).first()
 
     if (!profile) {
-      return ctx.response.notFound('Profile not found')
+      ctx.session.flash('error', `Profile with handle "${handle}" not found`)
+      return ctx.response.redirect('/')
     }
 
     const profileData = {
@@ -56,6 +58,6 @@ export default class ProfilesController {
       handle: profile.handle,
     }
 
-    return ctx.response.ok(profileData)
+    return await ctx.inertia.render('profile', { profile: profileData })
   }
 }

@@ -41,3 +41,17 @@ router
   .get('/profiles/:handle', '#controllers/profiles_controller.show')
   .as('profiles.show')
   .use([middleware.auth(), middleware.profileRequired()])
+
+// Chat routes
+router
+  .get('/chats/:id', '#controllers/chats_controller.showChat')
+  .as('chats.show')
+  .use([middleware.auth(), middleware.profileRequired()])
+router
+  .post('/chats/one-on-one', '#controllers/chats_controller.storeOneOnOne')
+  .as('chats.one-on-one')
+  .use([middleware.auth(), middleware.profileRequired()])
+router
+  .post('/chats/group', '#controllers/chats_controller.storeGroup')
+  .as('chats.group')
+  .use([middleware.auth(), middleware.profileRequired()])
