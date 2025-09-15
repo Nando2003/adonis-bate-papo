@@ -32,6 +32,8 @@
 
 <script lang="ts" setup>
 import { useForm } from '@inertiajs/vue3'
+import { onMounted, onUnmounted } from 'vue'
+import { io, Socket } from 'socket.io-client'
 import DefaultLayout from '../layouts/default_layout.vue'
 
 defineOptions({
@@ -42,7 +44,15 @@ const searchForm = useForm({
   handle: '',
 })
 
-const searchRequest = () => {
-  searchForm.post('/search')
-}
+let socket: Socket | null = null
+
+onMounted(() => { 
+  socket = io('/') 
+
+  socket.on('welcome', (message: string) => {
+    console.log(message)
+  })
+})
+onUnmounted(() => { if (socket) socket.disconnect() })
+
 </script>

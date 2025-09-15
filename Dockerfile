@@ -13,5 +13,6 @@ WORKDIR /app
 COPY --from=build /app .
 
 EXPOSE 3333
+EXPOSE 24678
 
 CMD ["npm", "run", "dev"]
