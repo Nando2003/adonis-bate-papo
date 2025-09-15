@@ -1,3 +1,4 @@
+import AuthSocketMiddleware from '#middleware/auth_socket_middleware'
 import app from '@adonisjs/core/services/app'
 import server from '@adonisjs/core/services/server'
 import { Server } from 'socket.io'
@@ -9,10 +10,14 @@ app.ready(async () => {
     cors: { origin: true, credentials: true },
   })
 
-  io.use(async (socket, next) => {})
+  io.use(async (socket, next) => {
+    const middleware = new AuthSocketMiddleware()
+    await middleware.handle(socket, next)
+  })
 
   io.on('connection', (socket) => {
-    socket.emit('welcome', 'Welcome to AdonisJS + Socket.io')
+    const userId = socket.data.userId
+    socket.emit('welcome', `Welcome user ${userId}!`)
   })
 
   io.engine.on('connection_error', (err) => {
