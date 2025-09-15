@@ -46,13 +46,14 @@ const searchForm = useForm({
 
 let socket: Socket | null = null
 
-onMounted(() => { 
-  socket = io('/') 
+onMounted(() => {
+  socket = io('/')
 
   socket.on('welcome', (message: string) => {
     console.log(message)
   })
 })
-onUnmounted(() => { if (socket) socket.disconnect() })
-
+onUnmounted(() => {
+  if (socket) socket.disconnect()
+})
 </script>
