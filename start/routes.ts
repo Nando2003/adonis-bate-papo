@@ -55,3 +55,9 @@ router
   .post('/chats/group', '#controllers/chats_controller.storeGroup')
   .as('chats.group')
   .use([middleware.auth(), middleware.profileRequired()])
+
+// Message routes
+router
+  .get('/messages/:chatId', '#controllers/messages_controller.index')
+  .as('messages.index')
+  .use([middleware.auth(), middleware.profileRequired()])

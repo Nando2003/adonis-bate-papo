@@ -22,45 +22,16 @@ export default class ChatsController {
     }
 
     await chatEntity.load('members')
-
-    await chatEntity.load('messages', (query) => {
-      query.orderBy('created_at', 'desc').limit(10).preload('sender')
-    })
-
     const isMember = chatEntity.members.every((member) => member.id !== userEntity.profile.id)
 
     if (isMember) {
       return ctx.inertia.render('errors/not_found')
     }
 
-    interface MessageResponse {
-      displayName: string
-      handle: string
-      content: string
-      createdAt: string
-    }
-
     interface ChatResponse {
+      id: number
       name: string
-      messages: Array<MessageResponse>
     }
-
-    const messages: Array<MessageResponse> = chatEntity.messages.map((message) => {
-      const displayName = message.sender.displayName
-      const handle = message.sender.handle
-
-      const createdAt =
-        typeof (message as any).createdAt?.toISO === 'function'
-          ? (message as any).createdAt.toISO()
-          : String((message as any).createdAt ?? '')
-
-      return {
-        displayName,
-        handle,
-        content: message.content,
-        createdAt,
-      }
-    })
 
     const chatName =
       chatEntity.type === ChatType.ONE_ON_ONE
@@ -71,11 +42,7 @@ export default class ChatsController {
       return ctx.inertia.render('errors/not_found')
     }
 
-    const chatResponse: ChatResponse = {
-      name: chatName,
-      messages,
-    }
-
+    const chatResponse: ChatResponse = { id: chatEntity.id, name: chatName }
     return ctx.inertia.render('chat', { chat: chatResponse })
   }
 
@@ -150,6 +117,4 @@ export default class ChatsController {
       return ctx.response.redirect('back')
     }
   }
-
-  async sendMessage(ctx: HttpContext) {}
 }
